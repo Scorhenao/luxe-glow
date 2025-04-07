@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Navbar } from "../landing/components/navbar";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export const Login = () => {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ export const Login = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -35,7 +37,7 @@ export const Login = () => {
             <div className="mb-4">
               <label
                 htmlFor="email"
-                className="block mb-2 text-sm font-medium text-gray-700 dark:text-[#fcf9f8]"
+                className="block mb-2 text-sm font-medium text-gray-800 "
               >
                 Email
               </label>
@@ -44,27 +46,37 @@ export const Login = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="your@email.com"
-                className="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white  text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#f46b44]"
+                className="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white  text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#f46b44]"
               />
             </div>
             <div className="mb-6">
               <label
                 htmlFor="password"
-                className="block mb-2 text-sm font-medium text-gray-700 dark:text-[#fcf9f8]"
+                className="block mb-2 text-sm font-medium text-gray-700"
               >
                 Password
               </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white  text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#f46b44]"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#f46b44] pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-[#f46b44] focus:outline-none"
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
+              </div>
             </div>
+
             <button
               type="submit"
-              className="w-full py-2 bg-[#f99db7] hover:bg-[#ff5c8b] text-white font-bold rounded-md transition-all duration-300 shadow-md hover:shadow-lg"
+              className="w-full py-2 bg-[#f99db7] hover:bg-[#ff5c8b] font-bold rounded-md transition-all duration-300 shadow-md hover:shadow-lg"
             >
               Login
             </button>

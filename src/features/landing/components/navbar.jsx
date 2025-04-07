@@ -13,6 +13,7 @@ export const Navbar = () => {
         <ul className="flex text-[#f46b44] dark:text-[#f46b44]">
           {[
             { path: "/", label: "Home" },
+            { path: "/aboutUs", label: "About Us" },
             { path: "/products", label: "Products" },
             { path: "/login", label: "Login" },
           ].map((item) => (
