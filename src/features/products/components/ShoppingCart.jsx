@@ -1,13 +1,13 @@
 import React from "react";
 import { FaShoppingCart } from "react-icons/fa";
 import { HiArchiveBoxXMark } from "react-icons/hi2";
+import { sendOrderToWhatsApp } from "../services/sendToWhatsApp";
 
 export const ShoppingCart = ({ cartItems, onToggle, isOpen, onRemoveItem }) => {
   const total = cartItems.reduce((sum, item) => sum + item.price, 0);
 
   return (
     <div className="fixed z-50 bottom-6 right-6">
-      {/* Botón de carrito */}
       <button
         onClick={onToggle}
         className="relative bg-[#f99db7] hover:bg-[#ff5c8b] text-white p-3 rounded-full shadow-lg"
@@ -20,7 +20,6 @@ export const ShoppingCart = ({ cartItems, onToggle, isOpen, onRemoveItem }) => {
         )}
       </button>
 
-      {/* Panel del carrito */}
       {isOpen && (
         <div className="p-4 mt-4 bg-white border border-gray-200 shadow-lg w-80 rounded-xl">
           <h3 className="text-lg font-semibold text-[#f46b44] mb-4">
@@ -49,6 +48,12 @@ export const ShoppingCart = ({ cartItems, onToggle, isOpen, onRemoveItem }) => {
                 <span>Total:</span>
                 <span>${total.toFixed(2)}</span>
               </div>
+              <button
+                className="mt-4 w-full bg-[#25D366] hover:bg-[#1ebe5d] text-white font-bold py-2 rounded-md transition"
+                onClick={() => sendOrderToWhatsApp(cartItems)}
+              >
+                Pagar por WhatsApp
+              </button>
             </>
           )}
         </div>
