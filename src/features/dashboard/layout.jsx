@@ -15,7 +15,7 @@ const dashboardItems = [
   {
     title: "Categorías",
     description: "Administra las categorías de productos.",
-    to: "/dashboard/categorias",
+    to: "/dashboard/categories",
   },
 ];
 

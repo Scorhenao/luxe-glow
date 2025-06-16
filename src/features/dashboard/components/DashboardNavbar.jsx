@@ -1,5 +1,5 @@
 import React from "react";
-import { Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import logo from "../../../../public/assets/imgs/luxe-glow-logo.png";
 
 const DashboardNavbar = () => {
@@ -62,20 +62,28 @@ const DashboardNavbar = () => {
         <div className="h-full px-3 pb-4 overflow-y-auto">
           <ul className="space-y-2 font-medium">
             <li>
-              <a
-                href="#"
+              <Link
+                to="/dashboard"
                 className="flex items-center p-2 text-gray-700 rounded-lg dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-800"
               >
                 <span className="ml-3">Dashboard</span>
-              </a>
+              </Link>
             </li>
             <li>
-              <a
-                href="#"
+              <Link
+                to="/dashboard/products"
                 className="flex items-center p-2 text-gray-700 rounded-lg dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-800"
               >
                 <span className="ml-3">Productos</span>
-              </a>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/dashboard/categories"
+                className="flex items-center p-2 text-gray-700 rounded-lg dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-800"
+              >
+                <span className="ml-3">Categorías</span>
+              </Link>
             </li>
           </ul>
         </div>

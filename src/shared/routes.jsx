@@ -8,6 +8,7 @@ import { Layout } from "../features/dashboard/layout";
 import { AboutUs } from "../features/landing/components/AboutUs";
 import { ProductsCatalog } from "../features/products/ProductsCatalog";
 import DashboardNavbar from "../features/dashboard/components/DashboardNavbar";
+import { Categories } from "../features/dashboard/categories/Categories";
 
 export const RoutesNav = () => {
   return (
@@ -20,6 +21,7 @@ export const RoutesNav = () => {
       <Route path="/dashboard" element={<DashboardNavbar/>}>
         <Route index element={<Layout />} /> {/* Pantalla principal */}
         <Route path="products" element={<Products />} />
+        <Route path="categories" element={<Categories />} />
         {/* <Route path="users" element={<Users />} /> */}
         {/* <Route path="view-users/:id" element={<ViewsUsers />} /> */}
       </Route>
