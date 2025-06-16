@@ -2,26 +2,50 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Navbar } from "../landing/components/navbar";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { login } from "./services/login.service";
 
 export const Login = () => {
   const navigate = useNavigate();
 
-  const [dataAccess] = useState({
-    email: "fercitacriollo@gmail.com",
-    password: "1234",
-  });
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleLogin = (e) => {
+  const validateEmail = (email) => {
+    const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return pattern.test(email);
+  };
+
+  const handleLogin = async (e) => {
     e.preventDefault();
+    setError("");
 
-    if (email === dataAccess.email && password === dataAccess.password) {
+    if (!email || !password) {
+      setError("Please fill in all fields.");
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      await login(email, password);
       navigate("/dashboard/products");
-    } else {
-      alert("Incorrect credentials");
+    } catch (err) {
+      setError(err.message || "Login failed. Check your credentials.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -34,10 +58,16 @@ export const Login = () => {
             Sign in to your account
           </h2>
           <form onSubmit={handleLogin}>
+            {error && (
+              <div className="mb-4 text-sm font-medium text-center text-red-600">
+                {error}
+              </div>
+            )}
+
             <div className="mb-4">
               <label
                 htmlFor="email"
-                className="block mb-2 text-sm font-medium text-gray-800 "
+                className="block mb-2 text-sm font-medium text-gray-800"
               >
                 Email
               </label>
@@ -46,9 +76,10 @@ export const Login = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="your@email.com"
-                className="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white  text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#f46b44]"
+                className="w-full px-4 py-2 rounded-md border border-gray-300 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#f46b44]"
               />
             </div>
+
             <div className="mb-6">
               <label
                 htmlFor="password"
@@ -62,7 +93,7 @@ export const Login = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#f46b44] pr-10"
+                  className="w-full px-4 py-2 rounded-md border border-gray-300 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#f46b44] pr-10"
                 />
                 <button
                   type="button"
@@ -76,9 +107,14 @@ export const Login = () => {
 
             <button
               type="submit"
-              className="w-full py-2 bg-[#f99db7] hover:bg-[#ff5c8b] font-bold rounded-md transition-all duration-300 shadow-md hover:shadow-lg"
+              disabled={isLoading}
+              className={`w-full py-2 font-bold rounded-md transition-all duration-300 shadow-md hover:shadow-lg ${
+                isLoading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-[#f99db7] hover:bg-[#ff5c8b]"
+              }`}
             >
-              Login
+              {isLoading ? "Logging in..." : "Login"}
             </button>
           </form>
         </div>

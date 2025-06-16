@@ -1,13 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Navbar } from "../landing/components/navbar";
-import { mockProducts } from "./services/data";
 import { ShoppingCart } from "./components/ShoppingCart";
 import { ProductsAdvertising } from "./components/ProductsAdvertising";
+import { fetchProducts } from "./services/products.service";
 
 export const ProductsCatalog = () => {
+  const [products, setProducts] = useState([]);
   const [cartItems, setCartItems] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
-
+  useEffect(() => {
+    fetchProducts().then(setProducts).catch(console.error);
+  }, []);
   const addToCart = (product) => {
     setCartItems((prev) => [...prev, product]);
   };
@@ -16,6 +19,8 @@ export const ProductsCatalog = () => {
     const updatedCart = cartItems.filter((_, i) => i !== index);
     setCartItems(updatedCart);
   };
+  console.log(products);
+  
   return (
     <>
       <Navbar />
@@ -34,7 +39,7 @@ export const ProductsCatalog = () => {
             Explore Our Products
           </h2>
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {mockProducts.map((product) => (
+            {products.map((product) => (
               <div
                 key={product.id}
                 className="overflow-hidden transition duration-300 bg-white shadow-md rounded-xl hover:shadow-lg"
