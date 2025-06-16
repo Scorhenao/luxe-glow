@@ -7,6 +7,7 @@ import { Products } from "../features/dashboard/products/Products";
 import { Layout } from "../features/dashboard/layout";
 import { AboutUs } from "../features/landing/components/AboutUs";
 import { ProductsCatalog } from "../features/products/ProductsCatalog";
+import DashboardNavbar from "../features/dashboard/components/DashboardNavbar";
 
 export const RoutesNav = () => {
   return (
@@ -16,10 +17,11 @@ export const RoutesNav = () => {
       <Route path="/aboutUs" element={<AboutUs />} />
       <Route path="/login" element={<Login />} />
 
-      <Route path="/dashboard" element={<Layout />}>
+      <Route path="/dashboard" element={<DashboardNavbar/>}>
+        <Route index element={<Layout />} /> {/* Pantalla principal */}
+        <Route path="products" element={<Products />} />
         {/* <Route path="users" element={<Users />} /> */}
         {/* <Route path="view-users/:id" element={<ViewsUsers />} /> */}
-        <Route path="products" element={<Products />} />
       </Route>
 
       <Route path="*" element={<NotFoundPage />} />

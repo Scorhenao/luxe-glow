@@ -1,4 +1,6 @@
 import React from "react";
+import { Outlet } from "react-router-dom";
+import logo from "../../../../public/assets/imgs/luxe-glow-logo.png";
 
 const DashboardNavbar = () => {
   return (
@@ -26,9 +28,9 @@ const DashboardNavbar = () => {
             </button>
 
             <a href="/" className="flex items-center gap-2">
-              <img src="/logo.svg" alt="Logo" className="h-8" />
+              <img src={logo} alt="Logo" className="w-12 h-13" />
               <span className="text-xl font-bold text-gray-800 dark:text-white">
-                TuMarca
+                Luxe-glow
               </span>
             </a>
           </div>
@@ -72,18 +74,18 @@ const DashboardNavbar = () => {
                 href="#"
                 className="flex items-center p-2 text-gray-700 rounded-lg dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-800"
               >
-                <span className="ml-3">Usuarios</span>
+                <span className="ml-3">Productos</span>
               </a>
             </li>
-            {/* Agrega más opciones aquí */}
           </ul>
         </div>
       </aside>
 
-      {/* Contenido principal con margen izquierdo para el sidebar */}
-      <main className="pt-16 pl-0 sm:pl-64">
-        <div className="p-4"><p>
-          Contenido principal</p></div>
+      <main className="pt-16 pl-0 sm:pl-64 min-h-screen bg-[#f9f9fb]">
+        <div className="p-6">
+          <Outlet />{" "}
+          {/* 👈 Aquí se cargan las vistas como Layout, Products, etc */}
+        </div>
       </main>
     </>
   );
