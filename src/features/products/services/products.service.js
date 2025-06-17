@@ -55,6 +55,47 @@ export const createProduct = async (productData, token) => {
   }
 };
 
+// Actualizar un producto por ID
+export const updateProduct = async (id, updatedData, token) => {
+  try {
+    let headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    let dataToSend;
+
+    // Si hay imagen -> multipart
+    if (updatedData.image instanceof File) {
+      const formData = new FormData();
+      for (const key in updatedData) {
+        if (key !== "image" && updatedData[key] !== undefined) {
+          formData.append(key, updatedData[key]);
+        }
+      }
+      formData.append("file", updatedData.image); // Campo esperado por el backend para imágenes
+      dataToSend = formData;
+      headers["Content-Type"] = "multipart/form-data";
+    }
+    // Sin imagen -> JSON
+    else {
+      dataToSend = { ...updatedData };
+      delete dataToSend.image; // Eliminar campo innecesario
+      headers["Content-Type"] = "application/json";
+    }
+
+    const response = await axios.patch(
+      `${API_URL}/products/${id}`,
+      dataToSend,
+      { headers }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error updating product:", error);
+    throw error;
+  }
+};
+
 // Eliminar un producto por ID
 export const deleteProduct = async (id, token) => {
   try {

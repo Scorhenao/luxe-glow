@@ -4,13 +4,21 @@ import {
   fetchProducts,
   createProduct,
   deleteProduct,
+  updateProduct,
+  fetchProductsWithCategory,
 } from "../../products/services/products.service";
-import { fetchCategories } from "../categories/services/categories.services";
+import {
+  fetchCategories,
+  fetchCategoryById,
+} from "../categories/services/categories.services";
 
 export const Products = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingProductId, setEditingProductId] = useState(null);
+
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -20,10 +28,21 @@ export const Products = () => {
     categoryId: "",
   });
 
-  const loadProducts = () => {
-    fetchProducts()
-      .then((data) => setProducts(data))
-      .catch((error) => console.error("Error al cargar productos:", error));
+  const loadProducts = async () => {
+    try {
+      const data = await fetchProductsWithCategory();
+      console.log("Productos cargados:", data);
+
+      const mapped = data.map((prod) => ({
+        ...prod,
+        category: prod.categoryId, // 🔄 guarda la categoría completa como `category`
+        categoryId: prod.categoryId.id, // ✅ para el formulario
+      }));
+
+      setProducts(mapped);
+    } catch (error) {
+      console.error("Error al cargar productos:", error);
+    }
   };
 
   const loadCategories = () => {
@@ -50,13 +69,12 @@ export const Products = () => {
     e.preventDefault();
     const token = localStorage.getItem("token");
 
-    // Validación antes de enviar
     if (
       !formData.name ||
       !formData.description ||
       !formData.price ||
       !formData.stock ||
-      !formData.image ||
+      (!formData.image && !isEditing) || // Solo obligatoria si está creando
       !formData.categoryId
     ) {
       Swal.fire(
@@ -68,24 +86,43 @@ export const Products = () => {
     }
 
     try {
-      const form = new FormData();
-      form.append("name", formData.name);
-      form.append("description", formData.description);
-      form.append("price", formData.price);
-      form.append("stock", formData.stock);
-      form.append("categoryId", formData.categoryId);
-      form.append("file", formData.image); // <- asegúrate de que el backend espera "file"
+      // Preparar los datos para enviar
+      const payload = {
+        name: formData.name,
+        description: formData.description,
+        price: formData.price,
+        stock: formData.stock,
+        categoryId: formData.categoryId,
+      };
 
-      // Debug opcional
-      console.log("Formulario a enviar:");
-      for (let [key, value] of form.entries()) {
-        console.log(`${key}:`, value);
+      // Solo agregar imagen si existe
+      if (formData.image) {
+        payload.image = formData.image;
       }
 
-      await createProduct(form, token);
-      Swal.fire("¡Éxito!", "Producto creado correctamente", "success");
+      if (isEditing) {
+        // Usar el servicio modificado que detecta el tipo de contenido
+        await updateProduct(editingProductId, payload, token);
+        Swal.fire(
+          "¡Actualizado!",
+          "Producto actualizado correctamente",
+          "success"
+        );
+      } else {
+        // Para creación siempre necesitamos imagen
+        const form = new FormData();
+        form.append("name", formData.name);
+        form.append("description", formData.description);
+        form.append("price", formData.price);
+        form.append("stock", formData.stock);
+        form.append("categoryId", formData.categoryId);
+        form.append("file", formData.image); // Campo requerido para creación
 
-      // Reset
+        await createProduct(form, token);
+        Swal.fire("¡Éxito!", "Producto creado correctamente", "success");
+      }
+
+      // Resetear el estado
       setFormData({
         name: "",
         description: "",
@@ -95,10 +132,12 @@ export const Products = () => {
         categoryId: "",
       });
       setIsModalOpen(false);
+      setIsEditing(false);
+      setEditingProductId(null);
       loadProducts();
     } catch (error) {
-      console.error("Error al crear producto:", error);
-      Swal.fire("Error", "No se pudo crear el producto", "error");
+      console.error("Error al enviar producto:", error);
+      Swal.fire("Error", "No se pudo procesar el producto", "error");
     }
   };
 
@@ -130,10 +169,25 @@ export const Products = () => {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-semibold">Listado de Productos</h2>
         <button
-          onClick={() => setIsModalOpen(true)}
+          type="button"
+          onClick={() => {
+            console.log("datos", formData);
+
+            setFormData({
+              name: "",
+              description: "",
+              price: "",
+              stock: "",
+              image: null,
+              categoryId: "",
+            });
+            setIsEditing(false);
+            setEditingProductId(null);
+            setIsModalOpen(true);
+          }}
           className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
         >
-          Crear Producto
+          Crear
         </button>
       </div>
 
@@ -145,6 +199,7 @@ export const Products = () => {
             <th className="px-4 py-2 border border-gray-300">Precio</th>
             <th className="px-4 py-2 border border-gray-300">Stock</th>
             <th className="px-4 py-2 border border-gray-300">Imagen</th>
+            <th className="px-4 py-2 border border-gray-300">Categoría</th>
             <th className="px-4 py-2 border border-gray-300">Acciones</th>
           </tr>
         </thead>
@@ -154,7 +209,7 @@ export const Products = () => {
               <tr key={prod.id}>
                 <td className="px-4 py-2 border">{prod.name}</td>
                 <td className="px-4 py-2 border">{prod.description}</td>
-                <td className="px-4 py-2 border">${prod.price.toFixed(2)}</td>
+                <td className="px-4 py-2 border">${prod.price}</td>
                 <td className="px-4 py-2 border">{prod.stock}</td>
                 <td className="px-4 py-2 border">
                   {prod.imageUrl ? (
@@ -168,12 +223,27 @@ export const Products = () => {
                   )}
                 </td>
                 <td className="px-4 py-2 border">
+                  {prod.category?.name || "Sin categoría"}
+                </td>
+                <td className="px-4 py-2 border">
                   <div className="flex items-center gap-2">
                     <button
                       className="text-blue-500 hover:text-blue-700"
                       onClick={() => {
-                        // En un futuro puedes implementar esto para cargar los datos en el formulario
-                        console.log("Editar producto:", prod.id);
+                        console.log("Producto a editar:", prod);
+
+                        setFormData({
+                          name: prod.name,
+                          description: prod.description,
+                          price: prod.price,
+                          stock: prod.stock,
+                          image: null,
+                          categoryId: prod.categoryId.toString(),
+                        });
+
+                        setEditingProductId(prod.id);
+                        setIsEditing(true);
+                        setIsModalOpen(true);
                       }}
                     >
                       ✏️
@@ -201,11 +271,12 @@ export const Products = () => {
         </tbody>
       </table>
 
-      {/* Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
-            <h3 className="mb-4 text-xl font-semibold">Nuevo Producto</h3>
+            <h3 className="mb-4 text-xl font-semibold">
+              {isEditing ? "Editar Producto" : "Nuevo Producto"}
+            </h3>{" "}
             <form onSubmit={handleSubmit} className="space-y-4">
               <input
                 type="text"
@@ -250,6 +321,19 @@ export const Products = () => {
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded"
               />
+              {isEditing && formData.image === null && (
+                <div className="mb-2">
+                  <p className="text-sm text-gray-500">Imagen actual:</p>
+                  <img
+                    src={
+                      products.find((p) => p.id === editingProductId)?.imageUrl
+                    }
+                    alt="Imagen actual"
+                    className="object-cover w-24 h-24 mt-1 rounded"
+                  />
+                </div>
+              )}
+
               <select
                 name="categoryId"
                 value={formData.categoryId}
@@ -259,7 +343,7 @@ export const Products = () => {
               >
                 <option value="">Seleccione una categoría</option>
                 {categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
+                  <option key={cat.id} value={cat.id.toString()}>
                     {cat.name}
                   </option>
                 ))}
@@ -273,11 +357,12 @@ export const Products = () => {
                 >
                   Cancelar
                 </button>
+
                 <button
                   type="submit"
                   className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
                 >
-                  Crear
+                  {isEditing ? "Actualizar" : "Crear"}
                 </button>
               </div>
             </form>
