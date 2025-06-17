@@ -45,7 +45,7 @@ export const ProductsCatalog = () => {
                 className="overflow-hidden transition duration-300 bg-white shadow-md rounded-xl hover:shadow-lg"
               >
                 <img
-                  src={product.image}
+                  src={product.imageUrl}
                   alt={product.name}
                   className="object-cover w-full h-48"
                 />

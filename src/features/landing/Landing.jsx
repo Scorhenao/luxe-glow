@@ -2,8 +2,8 @@ import React from "react";
 import { Navbar } from "./components/navbar";
 import { Carrousel } from "./components/Carrousel";
 import Footer from "./components/Footer";
-import { Advertising } from "./components/advertising";
 import { Welcome } from "./components/Welcome";
+import { AdvertisingLanding } from "./components/Advertising";
 
 export const Landing = () => {
   return (
@@ -25,7 +25,7 @@ export const Landing = () => {
                 Conoce las últimas novedades en belleza, bienestar y servicios.
               </p>
             </div>
-            <Advertising />
+            <AdvertisingLanding />
           </div>
         </section>
 

@@ -1,5 +1,5 @@
 export const sendOrderToWhatsApp = (cartItems) => {
-  const phoneNumber = "573113369669"; // Número en formato internacional (sin '+', con código país)
+  const phoneNumber = "573132646453"; // Número en formato internacional (sin '+', con código país)
   const message = {
     order: cartItems.map((item) => ({
       name: item.name,
@@ -9,9 +9,9 @@ export const sendOrderToWhatsApp = (cartItems) => {
   };
 
   const text = encodeURIComponent(
-    `🛍 Nuevo Pedido:\n${message.order
-      .map((item, i) => `${i + 1}. ${item.name} - $${item.price.toFixed(2)}`)
-      .join("\n")}\n\n💵 Total: $${message.total}`
+    `🛍 *Nuevo Pedido:*\n\n${message.order
+      .map((item, i) => `*${i + 1}.* ${item.name} - $${item.price.toFixed(2)}`)
+      .join("\n")}\n\n💵 *Total:* $${message.total}`
   );
 
   const url = `https://wa.me/${phoneNumber}?text=${text}`;

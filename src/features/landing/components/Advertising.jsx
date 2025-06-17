@@ -1,6 +1,6 @@
 import React from "react";
 
-export const Advertising = () => {
+export const AdvertisingLanding = () => {
   return (
     <aside className="w-full p-4 mt-10 bg-white rounded-lg shadow-lg md:w-64 md:mt-0">
       <h3 className="text-xl font-semibold text-[#f46b44] mb-4">Publicidad</h3>

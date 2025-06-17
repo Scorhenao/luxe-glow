@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import {
   fetchCategories,
   createCategory,
+  deleteCategory,
 } from "./services/categories.services";
 
 export const Categories = () => {
@@ -28,33 +29,56 @@ export const Categories = () => {
     }));
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    const token = localStorage.getItem("token");
-    await createCategory(formData, token);
-    Swal.fire({
-      icon: "success",
-      title: "Categoría creada",
-      text: "La nueva categoría se ha agregado exitosamente.",
-      confirmButtonColor: "#3085d6",
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem("token");
+      await createCategory(formData, token);
+      Swal.fire({
+        icon: "success",
+        title: "Categoría creada",
+        text: "La nueva categoría se ha agregado exitosamente.",
+        confirmButtonColor: "#3085d6",
+      });
+      setFormData({ name: "", description: "" });
+      setIsModalOpen(false);
+      loadCategories();
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text:
+          error?.response?.status === 401
+            ? "No autorizado. Por favor inicia sesión nuevamente."
+            : "No se pudo crear la categoría. Inténtalo más tarde.",
+        confirmButtonColor: "#d33",
+      });
+      console.error("Error al crear la categoría:", error);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    const confirm = await Swal.fire({
+      title: "¿Eliminar categoría?",
+      text: "Esta acción no se puede deshacer.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
     });
-    setFormData({ name: "", description: "" });
-    setIsModalOpen(false);
-    loadCategories();
-  } catch (error) {
-    Swal.fire({
-      icon: "error",
-      title: "Error",
-      text:
-        error?.response?.status === 401
-          ? "No autorizado. Por favor inicia sesión nuevamente."
-          : "No se pudo crear la categoría. Inténtalo más tarde.",
-      confirmButtonColor: "#d33",
-    });
-    console.error("Error al crear la categoría:", error);
-  }
-};
+
+    if (confirm.isConfirmed) {
+      try {
+        const token = localStorage.getItem("token");
+        await deleteCategory(id, token);
+        Swal.fire("Eliminado", "La categoría ha sido eliminada", "success");
+        loadCategories();
+      } catch (err) {
+        console.error("Error al eliminar categoría:", err);
+        Swal.fire("Error", "No se pudo eliminar la categoría", "error");
+      }
+    }
+  };
 
   return (
     <>
@@ -83,9 +107,23 @@ const handleSubmit = async (e) => {
                 <td className="px-4 py-2 border">{cat.name}</td>
                 <td className="px-4 py-2 border">{cat.description}</td>
                 <td className="px-4 py-2 border">
-                  <button className="text-blue-500 hover:underline">
-                    Editar
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      className="text-blue-500 hover:text-blue-700"
+                      onClick={() => {
+                        // En el futuro puedes cargar los datos al formulario
+                        console.log("Editar categoría:", cat.id);
+                      }}
+                    >
+                      ✏️
+                    </button>
+                    <button
+                      className="text-red-500 hover:text-red-700"
+                      onClick={() => handleDelete(cat.id)}
+                    >
+                      🗑️
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))

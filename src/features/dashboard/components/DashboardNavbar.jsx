@@ -5,17 +5,16 @@ import logo from "../../../../public/assets/imgs/luxe-glow-logo.png";
 const DashboardNavbar = () => {
   return (
     <>
-      {/* Navbar */}
-      <nav className="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-slate-900 dark:border-gray-700">
+      <nav className="fixed top-0 z-50 w-full bg-[#fff4f8] border-b border-[#ffd3e9] dark:bg-[#ffd3e9] dark:border-[#ffbedc]">
         <div className="flex items-center justify-between px-4 py-3 lg:px-6">
-          {/* Left: Logo + Toggle */}
+          {/* Logo + Toggle */}
           <div className="flex items-center gap-3">
             <button
               data-drawer-target="logo-sidebar"
               data-drawer-toggle="logo-sidebar"
               aria-controls="logo-sidebar"
               type="button"
-              className="inline-flex items-center p-2 text-gray-600 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:text-gray-300 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+              className="inline-flex items-center p-2 text-[#f46b44] rounded-lg sm:hidden hover:bg-[#ffe5ee] focus:outline-none focus:ring-2 focus:ring-[#f46b44]"
             >
               <span className="sr-only">Open sidebar</span>
               <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -29,17 +28,17 @@ const DashboardNavbar = () => {
 
             <a href="/" className="flex items-center gap-2">
               <img src={logo} alt="Logo" className="w-12 h-13" />
-              <span className="text-xl font-bold text-gray-800 dark:text-white">
+              <span className="text-xl font-bold text-[#f46b44] dark:text-[#f46b44]">
                 Luxe-glow
               </span>
             </a>
           </div>
 
-          {/* Right: User Avatar */}
+          {/* Avatar */}
           <div className="flex items-center">
             <button
               type="button"
-              className="relative w-8 h-8 overflow-hidden bg-gray-200 rounded-full dark:bg-gray-600"
+              className="relative w-8 h-8 overflow-hidden bg-[#ffe1ee] rounded-full"
               data-dropdown-toggle="dropdown-user"
             >
               <img
@@ -48,15 +47,13 @@ const DashboardNavbar = () => {
                 className="object-cover w-full h-full rounded-full"
               />
             </button>
-            {/* Dropdown opcional aquí */}
           </div>
         </div>
       </nav>
 
-      {/* Sidebar */}
       <aside
         id="logo-sidebar"
-        className="fixed top-0 left-0 z-40 w-64 h-screen pt-16 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-slate-900 dark:border-gray-700"
+        className="fixed top-0 left-0 z-40 w-64 h-screen pt-16 transition-transform -translate-x-full bg-[#fff4f8] border-r border-[#ffd3e9] sm:translate-x-0 dark:bg-[#ffd3e9] dark:border-[#ffbedc]"
         aria-label="Sidebar"
       >
         <div className="h-full px-3 pb-4 overflow-y-auto">
@@ -64,7 +61,7 @@ const DashboardNavbar = () => {
             <li>
               <Link
                 to="/dashboard"
-                className="flex items-center p-2 text-gray-700 rounded-lg dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-800"
+                className="flex items-center p-2 text-[#f46b44] rounded-lg hover:bg-[#ffe5ee] hover:text-[#ff5c8b]"
               >
                 <span className="ml-3">Dashboard</span>
               </Link>
@@ -72,7 +69,7 @@ const DashboardNavbar = () => {
             <li>
               <Link
                 to="/dashboard/products"
-                className="flex items-center p-2 text-gray-700 rounded-lg dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-800"
+                className="flex items-center p-2 text-[#f46b44] rounded-lg hover:bg-[#ffe5ee] hover:text-[#ff5c8b]"
               >
                 <span className="ml-3">Productos</span>
               </Link>
@@ -80,7 +77,7 @@ const DashboardNavbar = () => {
             <li>
               <Link
                 to="/dashboard/categories"
-                className="flex items-center p-2 text-gray-700 rounded-lg dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-800"
+                className="flex items-center p-2 text-[#f46b44] rounded-lg hover:bg-[#ffe5ee] hover:text-[#ff5c8b]"
               >
                 <span className="ml-3">Categorías</span>
               </Link>
@@ -89,10 +86,9 @@ const DashboardNavbar = () => {
         </div>
       </aside>
 
-      <main className="pt-16 pl-0 sm:pl-64 min-h-screen bg-[#f9f9fb]">
+      <main className="pt-16 pl-0 sm:pl-64 min-h-screen bg-[#fff9fb]">
         <div className="p-6">
-          <Outlet />{" "}
-          {/* 👈 Aquí se cargan las vistas como Layout, Products, etc */}
+          <Outlet />
         </div>
       </main>
     </>
